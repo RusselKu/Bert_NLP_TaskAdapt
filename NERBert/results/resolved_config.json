@@ -1,0 +1,22 @@
+{
+  "model_id": "google-bert/bert-base-cased",
+  "dataset_id": "lhoestq/conll2003",
+  "seed": 42,
+  "epochs": 3,
+  "batch_size": 8,
+  "gradient_accumulation_steps": 2,
+  "eval_batch_size": 16,
+  "max_length": 512,
+  "head_lr": 0.001,
+  "encoder_lr": 2e-05,
+  "weight_decay": 0.01,
+  "warmup_fraction": 0.1,
+  "partial_layers": 2,
+  "methods": [
+    "partial",
+    "full"
+  ],
+  "dataset_revision": "19edcb426bfd625c275c17b9a99b2239243f4377",
+  "model_revision": "cd5ef92a9fb2f889e972770a36d4ed042daf221e",
+  "smoke": false
+}

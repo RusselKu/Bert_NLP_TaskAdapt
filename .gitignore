@@ -45,3 +45,11 @@ ENV/
 .DS_Store
 Thumbs.db
 desktop.ini
+
+# NER: datos descargados y artefactos locales de entrenamiento
+.cache/
+NERBert/smoke_results/
+NERBert/results/*/checkpoints/
+NERBert/results/*/evaluation/
+NERBert/results/*/test_predictions.json
+NERBert/*.log

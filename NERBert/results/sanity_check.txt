@@ -1,0 +1,37 @@
+SANITY CHECK: token | etiqueta (primera subpalabra); -100 = ignorar
+
+Ejemplo train[0]
+[CLS]                     -100 IGNORE
+EU                           3 B-ORG
+rejects                      0 O
+German                       7 B-MISC
+call                         0 O
+to                           0 O
+boycott                      0 O
+British                      7 B-MISC
+la                           0 O
+##mb                      -100 IGNORE
+.                            0 O
+[SEP]                     -100 IGNORE
+[PAD]                     -100 IGNORE
+[PAD]                     -100 IGNORE
+[PAD]                     -100 IGNORE
+[PAD]                     -100 IGNORE
+
+Ejemplo train[1]
+[CLS]                     -100 IGNORE
+Peter                        1 B-PER
+Blackburn                    2 I-PER
+[SEP]                     -100 IGNORE
+[PAD]                     -100 IGNORE
+[PAD]                     -100 IGNORE
+[PAD]                     -100 IGNORE
+[PAD]                     -100 IGNORE
+[PAD]                     -100 IGNORE
+[PAD]                     -100 IGNORE
+[PAD]                     -100 IGNORE
+[PAD]                     -100 IGNORE
+[PAD]                     -100 IGNORE
+[PAD]                     -100 IGNORE
+[PAD]                     -100 IGNORE
+[PAD]                     -100 IGNORE
