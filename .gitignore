@@ -1,0 +1,10 @@
+# Archivos de checkpoints y pesos pesados (evita exceder límite de 100MB de GitHub)
+results_full/
+results_partial/
+*.safetensors
+*.bin
+
+# Cache y temporales de Python / Jupyter
+__pycache__/
+.ipynb_checkpoints/
+*.pyc
