@@ -1,0 +1,37 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+
+# Virtual environments
+.venv/
+venv/
+env/
+
+# Jupyter
+.ipynb_checkpoints/
+
+# Environment variables and secrets
+.env
+*.env
+
+# Hugging Face cache / credentials
+.cache/
+huggingface/
+
+# Local model staging
+models/*
+!models/README.md
+
+# Large model weights
+*.bin
+*.safetensors
+*.pt
+*.pth
+*.ckpt
+
+# OS / editors
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
