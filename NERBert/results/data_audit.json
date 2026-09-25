@@ -1,0 +1,23 @@
+{
+  "train": {
+    "sentences": 14041,
+    "words": 203621,
+    "max_wordpieces_including_specials": 173,
+    "truncated_sentences": 0,
+    "fingerprint": "706cf01414c70570"
+  },
+  "validation": {
+    "sentences": 3250,
+    "words": 51362,
+    "max_wordpieces_including_specials": 151,
+    "truncated_sentences": 0,
+    "fingerprint": "0b12ea85cb702cbf"
+  },
+  "test": {
+    "sentences": 3453,
+    "words": 46435,
+    "max_wordpieces_including_specials": 148,
+    "truncated_sentences": 0,
+    "fingerprint": "94184a184db99cb8"
+  }
+}
