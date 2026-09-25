@@ -1,10 +1,47 @@
-# Archivos de checkpoints y pesos pesados (evita exceder límite de 100MB de GitHub)
-results_full/
-results_partial/
+# =====================================================================
+# GitIgnore - NLP BERT Task Adaptation
+# =====================================================================
+
+# 1. Archivos de Pesos y Checkpoints (>100MB protegidos de GitHub)
 *.safetensors
 *.bin
+*.pt
+*.pth
+*.ckpt
+*.h5
+*.msgpack
+*.onnx
 
-# Cache y temporales de Python / Jupyter
+# Checkpoints y carpetas de resultados
+results_full/
+results_partial/
+checkpoints/
+checkpoint-*/
+
+# 2. Credenciales y Variables de Entorno (Seguridad)
+.env
+.env.*
+*.env
+*.pem
+*.key
+
+# 3. Cache de Python y Entornos Virtuales
 __pycache__/
+*.py[cod]
+*$py.class
+.venv/
+venv/
+env/
+ENV/
+.pytest_cache/
+
+# 4. Temporales de Jupyter y VSCode
 .ipynb_checkpoints/
-*.pyc
+*/.ipynb_checkpoints/*
+.vscode/
+.idea/
+
+# 5. Archivos del Sistema Operativo
+.DS_Store
+Thumbs.db
+desktop.ini
