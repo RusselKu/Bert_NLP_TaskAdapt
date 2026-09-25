@@ -190,7 +190,53 @@ print(f"Respuesta: {answer}")  # -> "French priest Edward Sorin"
 
 ---
 
-## 📂 7. Estructura del Directorio
+## 🎯 7. Intended Use (Casos de Uso Previstos)
+
+### Usos Previstos
+- **Extractive Question Answering:** Recuperación exacta de respuestas textuales basadas en hechos a partir de contextos en inglés (documentación, manuales, artículos técnicos y enciclopedias).
+- **Módulos de Lectura en Sistemas RAG / DPR:** Integración como *Reader Model* en arquitecturas de recuperación aumentada por generación o búsqueda semántica.
+- **Benchmarking de Transfer Learning:** Evaluación de la capacidad de adaptación y fine-tuning eficiente en arquitecturas basadas en Transformers.
+
+### Usos No Previstos y Fuera de Alcance
+- **QA Generativo / Abstractivo:** No genera nuevo vocabulario ni sintetiza explicaciones libres; se limita exclusivamente a extraer segmentos (*spans*) presentes en el texto.
+- **Preguntas sin respuesta en el texto (SQuAD v2.0):** Al ser entrenado sobre SQuAD v1.1, asume que existe una respuesta válida en el contexto y seleccionará el span más probable en lugar de abstenerse.
+- **Textos en idiomas distintos al inglés:** El modelo base y el ajuste se realizaron sobre corpus en inglés.
+
+---
+
+## ⚖️ 8. Justificación Técnica: Uso de SQuAD Completo (87,599 muestras) vs Subsample (~15k)
+
+En el plan de trabajo preliminar se consideró una alternativa de submuestreo ($\sim 15,000$ ejemplos) como medida de contingencia ante posibles restricciones de tiempo o memoria en entornos de ejecución con recursos limitados (ej. cuotas gratuitas de Google Colab). No obstante, para la experimentación final se optó por entrenar con el **100% del dataset oficial de SQuAD v1.1 (87,599 pares pregunta-contexto)** debido a las siguientes razones técnicas fundamentales:
+
+1. **Aceleración por Hardware y Eficiencia Temporal:**
+   Gracias al uso de una GPU moderna (**NVIDIA RTX 4070 Laptop, 8.59 GB VRAM**) combinada con **Mixed Precision (AMP FP16)** y dataloaders optimizados con `doc_stride=128`, el tiempo por época fue de únicamente **~10.9 minutos (Partial FT)** y **~22.5 minutos (Full FT)**. Esto permitió completar las 3 épocas en tiempos totalmente manejables (~32.9 min y ~67.9 min respectivamente) sin requerir submuestreo.
+2. **Validación Directa contra el Estado del Arte (Devlin et al., 2018):**
+   El paper oficial de BERT evaluó el benchmark sobre la totalidad de SQuAD v1.1. Usar el dataset completo permitió verificar empíricamente que nuestro entrenamiento reproduce con rigor el baseline de Google (**88.21% F1 obtenido vs 88.50% oficial**), demostrando una fidelidad de -0.29 puntos F1.
+3. **Diversidad Temática y Prevención de Sesgo de Muestreo (*Sampling Bias*):**
+   SQuAD v1.1 contiene más de 500 artículos de Wikipedia que abarcan dominios semánticos y estructuras sintácticas heterogéneas. Reducir el dataset a 15k habría introducido varianza indeseada según la semilla de partición y habría mermado la capacidad del modelo para generalizar sobre contextos con co-referencias complejas.
+4. **Medición Realista del Compromiso (*Trade-off*) de Parámetros:**
+   Evaluar el *Partial Fine-Tuning* (Top 4 capas) frente al *Full Fine-Tuning* sobre la escala real de datos permitió medir con precisión que la adaptación parcial ahorra un **51.5% de tiempo de cómputo** reteniendo el **96.5% del rendimiento óptimo**, una conclusión metodológicamente sólida para despliegues en producción.
+
+---
+
+## ⚠️ 9. Limitaciones y Sesgos
+
+1. **Longitud de Secuencia:** El modelo procesa ventanas de hasta 384 tokens (con `doc_stride=128`). Textos que superen este límite deben ser fragmentados previamente.
+2. **Razonamiento Multi-hop y Numérico:** No realiza operaciones aritméticas (ej. diferencias de fechas, conteos) ni inferencia lógica distribuida en múltiples párrafos no adyacentes.
+3. **Sesgos del Corpus Base:** Hereda los posibles sesgos lingüísticos y culturales presentes en Wikipedia y en el corpus de pre-entrenamiento de BERT (BookCorpus + English Wikipedia).
+
+---
+
+## 📚 10. Referencias
+
+1. **Devlin, J., Chang, M. W., Lee, K., & Toutanova, K. (2018).** *BERT: Pre-training of Deep Bidirectional Transformers for Language Understanding.* [arXiv:1810.04805](https://arxiv.org/abs/1810.04805).
+2. **Rajpurkar, P., Zhang, J., Lopyrev, K., & Liang, P. (2016).** *SQuAD: 100,000+ Questions for Machine Comprehension of Text.* [arXiv:1606.05250](https://arxiv.org/abs/1606.05250).
+3. **Wolf, T., et al. (2020).** *Transformers: State-of-the-Art Natural Language Processing.* In Proceedings of the 2020 EMNLP: System Demonstrations (pp. 38–45).
+4. **Loshchilov, I., & Hutter, F. (2017).** *Decoupled Weight Decay Regularization (AdamW).* [arXiv:1711.05101](https://arxiv.org/abs/1711.05101).
+
+---
+
+## 📂 11. Estructura del Directorio
 
 ```
 QABert/
@@ -207,3 +253,4 @@ QABert/
 │   └── README.md                  # Model card para Hugging Face
 └── .env                           # Variables de entorno y token de Hugging Face
 ```
+
