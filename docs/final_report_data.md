@@ -112,7 +112,7 @@ Published artifact:
 The final model and tokenizer are published and independently verified at
 bialexacosta21/bert-agnews-topic-classification.
 
-Status: PENDING ARTIFACT / HF.
+Status: COMPLETE / HF VERIFIED.
 
 
 ## Global conclusions

@@ -341,7 +341,9 @@ For the single fine-tuning epoch, the Trainer reported a training loss of 0.1807
 
 The Full Fine-Tuning model was selected because it achieved the highest measured classification performance.
 
-At the time of report consolidation, the trained model artifact had not yet been received by the project integrator for independent Hugging Face Hub verification.
+The final model and tokenizer are published and independently verified on Hugging Face Hub:
+
+https://huggingface.co/bialexacosta21/bert-agnews-topic-classification
 
 
 ## 7. Cross-Task Comparison
@@ -395,7 +397,7 @@ a specific pair of POS tags being the dominant source of confusion.
 ### 8.3 Topic Classification
 
 Class-level results provide a measurable view of the remaining Topic
-Classification errors. With Full Fine-Tuning, F1 was 0.96 for World,
+Classification errors. With Full Fine-Tuning, F1 was 0.95 for World,
 0.99 for Sports, 0.92 for Business, and 0.92 for Sci/Tech. Each class
 contained 1,900 test examples.
 
@@ -405,21 +407,26 @@ of 0.91, 0.97, 0.86, and 0.87 for World, Sports, Business, and Sci/Tech,
 respectively.
 
 Using the rounded reported scores, Fine-Tuning improved F1 by
-approximately +0.05 for World, +0.02 for Sports, +0.06 for Business,
+approximately +0.04 for World, +0.02 for Sports, +0.06 for Business,
 and +0.05 for Sci/Tech. This shows that the gain from Fine-Tuning was
 present across all four classes rather than being restricted to a
 single category.
 
-No confusion matrix or stored misclassified article examples are
-available for this experiment. Therefore, the available evidence does
-not support attributing the lower Business or Sci/Tech F1 to a specific
-semantic confusion between those categories.
+The preserved confusion matrix and error table provide direct evidence about
+the remaining mistakes. The final model produced 422 errors among 7,600
+official test examples (5.55%). The most frequent bidirectional confusion was
+Business ↔ Sci/Tech, with 135 Business→Sci/Tech cases and 86
+Sci/Tech→Business cases. World ↔ Business followed with 43 World→Business
+and 41 Business→World cases. Business accumulated 182 errors, whereas Sports
+had only 18. These counts are consistent with greater semantic overlap between
+business and technology reporting, although the confusion matrix alone does
+not establish a causal explanation for the errors.
 
 
 ## 8.4 Published Model Artifacts
 
-Three of the four selected models were independently verified as available
-on Hugging Face Hub at the time of report consolidation:
+All four selected models were independently verified as available on
+Hugging Face Hub at the time of final consolidation:
 
 - **Named Entity Recognition:**
   https://huggingface.co/jonav/bert-base-cased-ner-conll2003
@@ -430,13 +437,13 @@ on Hugging Face Hub at the time of report consolidation:
 - **Extractive Question Answering:**
   https://huggingface.co/RusselKuAguilar/bert-base-cased-squad-extractive-qa
 
-For these three repositories, the model architecture, configuration,
-tokenizer, model weights, and repository accessibility were verified.
+- **Topic Classification:**
+  https://huggingface.co/bialexacosta21/bert-agnews-topic-classification
 
-The selected Topic Classification model had been saved during the original
-training session as `bert_agnews_final`, but its trained weights were not
-present in the shared GitHub repository at consolidation time. Therefore,
-its Hugging Face artifact could not yet be independently verified.
+For all four repositories, repository accessibility, model configuration,
+tokenizer files, model weights, and the task-appropriate Transformers
+architecture were independently verified. Model Cards were also present.
+
 
 ## 9. Limitations
 
@@ -446,8 +453,9 @@ The main limitations of the experimental study are:
 - Hardware differed among team members.
 - Some configurations differed in epochs, scheduler settings, and trainable layers simultaneously.
 - Training-time comparisons therefore reflect complete experimental configurations rather than perfectly controlled ablations.
-- The Topic Classification experiment did not preserve the official test split as an untouched final evaluation set.
-- The AG News model artifact had not yet been independently verified on Hugging Face Hub at the time of consolidation.
+- Topic Classification Full Fine-Tuning was run for a single epoch.
+- Topic Classification inputs were truncated to a maximum sequence length of 128 tokens.
+- Error-analysis interpretations are descriptive and should not be treated as causal explanations.
 - Performance should not be assumed to generalize unchanged to different domains, languages, or dataset distributions.
 
 
