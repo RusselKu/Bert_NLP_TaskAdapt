@@ -39,8 +39,8 @@ serialization, and Hub publication.
 | Error analysis | Included in the final report using only preserved experimental evidence |
 | Cross-task comparison | Included in the final technical report |
 | Final PDF report | Available in `docs/final_report.pdf` |
-| Hugging Face publication | NER, POS, and QA independently verified; Topic artifact pending |
-| Model Cards | Verified for the three currently published repositories |
+| Hugging Face publication | All four final models independently verified on Hugging Face Hub |
+| Model Cards | Verified for all four published repositories |
 
 ---
 
@@ -151,17 +151,18 @@ fine-tuning on AG News.
 | Method | Accuracy | Macro F1 | Training Time |
 |---|---:|---:|---:|
 | Frozen BERT + Logistic Regression | 90.36% | 0.90 | 222.54 s |
-| **Full Fine-Tuning** | **94.58%** | **0.95** | 2889.20 s |
+| **Full Fine-Tuning** | **94.45%** | **0.9444** | 2793.66 s |
 
 The fine-tuned model achieved the highest measured classification
 performance.
 
-**Evaluation limitation:** the AG News official test split was also supplied
-to the Trainer as the evaluation dataset during the fine-tuning experiment.
-Although only one epoch was used and no early-stopping model selection was
-performed, the test set was not maintained as a completely untouched final
-evaluation set. This limitation is explicitly documented in the final
-report.
+**Evaluation protocol:** 10% of the original AG News training split was reserved
+for validation using seed 42. The official 7,600-example test split remained untouched
+during training and validation and was used exclusively for final evaluation.
+Only one fine-tuning epoch was used and no early-stopping model selection
+was performed. Training-time evaluation used the dedicated validation split,
+while the official AG News test split remained untouched until the final
+evaluation.
 
 Notebook:
 
@@ -203,9 +204,9 @@ The following final repositories have been independently verified using
 | NER | [jonav/bert-base-cased-ner-conll2003](https://huggingface.co/jonav/bert-base-cased-ner-conll2003) | `BertForTokenClassification` | Verified |
 | POS | [Rivaldo2309030/bert-base-cased-pos-tagging-ewt](https://huggingface.co/Rivaldo2309030/bert-base-cased-pos-tagging-ewt) | `BertForTokenClassification` | Verified |
 | QA | [RusselKuAguilar/bert-base-cased-squad-extractive-qa](https://huggingface.co/RusselKuAguilar/bert-base-cased-squad-extractive-qa) | `BertForQuestionAnswering` | Verified |
-| Topic Classification | Pending final artifact publication | `BertForSequenceClassification` | Pending |
+| Topic Classification | [bialexacosta21/bert-agnews-topic-classification](https://huggingface.co/bialexacosta21/bert-agnews-topic-classification) | `BertForSequenceClassification` | Verified |
 
-For the three verified repositories, the automated verification confirms:
+For the four verified repositories, the automated verification confirms:
 
 - repository accessibility;
 - Model Card presence;
@@ -346,9 +347,7 @@ The main documented limitations are:
 - expected seed-to-seed variation in neural fine-tuning;
 - non-identical POS Partial and Full Fine-Tuning configurations;
 - no preserved numerical confusion-matrix cells for POS;
-- reuse of the AG News test split as the evaluation dataset during Topic
-  Classification fine-tuning;
-- pending Hugging Face publication of the Topic Classification model.
+- Topic Classification Fine-Tuning was run for a single epoch.
 
 These limitations are included to preserve the validity and reproducibility
 of the reported conclusions.
