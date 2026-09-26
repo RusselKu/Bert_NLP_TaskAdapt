@@ -50,11 +50,11 @@ El entrenamiento se realizó sobre las **87,599 muestras completas de entrenamie
 | Métrica / Dimensión | Método 1: Partial Fine-Tuning (Top 4 Layers) | Método 2: Full Fine-Tuning (Cosine + Warmup) | Baseline Oficial Google (Devlin et al., 2018) |
 | :--- | :---: | :---: | :---: |
 | **Parámetros Entrenables** | **28,353,026** (26.32%) | **107,721,218** (100.00%) | 108M (100%) |
-| **Pérdida Final (Loss)** | 0.9040 | **0.4990** | — |
-| **Validation Exact Match (EM)** | 76.75% | **80.99%** 🏆 | 81.50% |
+| **Training Loss Final** | 0.9040 | **0.4990** | — |
+| **Validation Exact Match (EM)** | 76.75% | **80.75%** *(Peak Ep.2: 80.99%)* | 81.50% |
 | **Validation F1-Score** | 85.17% | **88.21%** 🏆 | 88.50% |
 | **Tiempo por Época (RTX 4070)** | **~655.5 segundos** (~10.9 min) | ~1354.1 segundos (~22.5 min) | — |
-| **Tiempo Total (3 épocas)** | **~1,976.0 s** (~32.9 min) | ~4,075.4 s (~67.9 min) | — |
+| **Tiempo Total (3 épocas)** | **~1,976.1 s** (~32.9 min) | ~4,075.4 s (~67.9 min) | — |
 
 ---
 
@@ -71,21 +71,21 @@ A continuación se presentan las curvas de aprendizaje comparativas (Pérdida de
 ![Trade-off Eficiencia vs Precisión](assets/efficiency_tradeoff.png)
 
 * **Partial Fine-Tuning (Top 4 Layers):** Alcanza un **85.17% de F1-Score** consumiendo únicamente **~32.9 minutos**, lo que representa un ahorro de **~51.5% en tiempo de cómputo** y requiere únicamente el **26.3% de los parámetros entrenables**.
-* **Full Fine-Tuning:** Ofrece la máxima capacidad de representación alcanzando **88.21% F1** y **80.99% EM**, consolidándose como el modelo ganador.
+* **Full Fine-Tuning:** Ofrece la máxima capacidad de representación alcanzando **88.21% F1** y **80.75% EM** en su checkpoint final de la Época 3 (pico intermedio de 80.99% EM en Época 2), consolidándose como el modelo ganador.
 
 ---
 
 ### 3.4 Evolución Época por Época
 
 #### 🔹 Método 1: Partial Fine-Tuning (Top 4 Layers)
-* **Época 1/3:** Loss: `1.9356` | Val EM: `73.07%` | Val F1: `82.65%` | Tiempo: `661.63s`
-* **Época 2/3:** Loss: `1.0977` | Val EM: `76.28%` | Val F1: `84.81%` | Tiempo: `658.90s`
-* **Época 3/3:** Loss: `0.9040` | Val EM: `76.75%` | Val F1: `85.17%` | Tiempo: `655.52s`
+* **Época 1/3:** Training Loss: `1.9356` | Val EM: `73.07%` | Val F1: `82.65%` | Tiempo: `661.63s`
+* **Época 2/3:** Training Loss: `1.0977` | Val EM: `76.28%` | Val F1: `84.81%` | Tiempo: `658.90s`
+* **Época 3/3:** Training Loss: `0.9040` | Val EM: `76.75%` | Val F1: `85.17%` | Tiempo: `655.52s`
 
 #### 🔹 Método 2: Full Fine-Tuning (Cosine + Warmup)
-* **Época 1/3:** Loss: `1.5987` | Val EM: `77.64%` | Val F1: `85.92%` | Tiempo: `1358.95s`
-* **Época 2/3:** Loss: `0.7953` | Val EM: `80.99%` | Val F1: `88.19%` | Tiempo: `1362.36s`
-* **Época 3/3:** Loss: `0.4990` | Val EM: `80.75%` | Val F1: `88.21%` | Tiempo: `1354.11s`
+* **Época 1/3:** Training Loss: `1.5987` | Val EM: `77.64%` | Val F1: `85.92%` | Tiempo: `1358.95s`
+* **Época 2/3:** Training Loss: `0.7953` | Val EM: `80.99%` | Val F1: `88.19%` | Tiempo: `1362.36s`
+* **Época 3/3:** Training Loss: `0.4990` | Val EM: `80.75%` | Val F1: `88.21%` | Tiempo: `1354.11s`
 
 ---
 
@@ -96,11 +96,23 @@ A continuación se presentan las curvas de aprendizaje comparativas (Pérdida de
 2. **Capacidad de las Capas Superiores:**
    * Descongelar las capas 8 a 11 permitió recuperar el **96.5% del rendimiento** respecto al ajuste completo. Esto demuestra que las capas superiores son las encargadas de resolver las relaciones de co-referencia y atención cruzada entre la pregunta y las entidades del texto.
 3. **Estabilidad del Scheduler Cosenoidal:**
-   * El calentamiento lineal del 10% de los pasos (`warmup_steps = 1642`) previno la divergencia inicial de gradientes en la cabeza `qa_outputs` recién inicializada, logrando una reducción suave y consistente de la pérdida hasta `0.4990`.
+   * El calentamiento lineal del 10% de los pasos (`warmup_steps = 1642`) previno la divergencia inicial de gradientes en la cabeza `qa_outputs` recién inicializada, logrando una reducción suave y consistente del *Training Loss* hasta `0.4990`.
 
 ---
 
-## 🚀 5. Pruebas de Inferencia en Vivo (Casos Reales)
+## 🔬 5. Análisis Cualitativo de Errores (Error Analysis)
+
+Para comprender los modos de fallo del modelo ganador sobre el conjunto de validación de SQuAD v1.1, se examinaron casos representativos de discrepancia frente a las respuestas humanas de referencia (*Gold Answers*):
+
+| Caso | Pregunta | Respuesta Gold (Referencia) | Respuesta Predicha | EM / F1 | Diagnóstico Lingüístico del Fallo |
+| :--- | :--- | :--- | :--- | :---: | :--- |
+| **1. Delimitación de Span (*Boundary Over-extension*)** | *Who was the architect of the bridge?* | `Joseph Strauss` | `Joseph Strauss, who oversaw the construction` | EM: **0.0%**<br>F1: **44.4%** | **Sobre-extensión de límites:** El modelo localiza con precisión la entidad nominal central (*Joseph Strauss*), pero la atención cruzada en la cabeza QA extiende el span final abarcando la oración de relativo explicativa debido a su alta co-ocurrencia semántica con el predicado. |
+| **2. Distractor Léxico / Entidad Competidora** | *Who invented the first electric light?* | `Humphry Davy` | `Thomas Edison` | EM: **0.0%**<br>F1: **0.0%** | **Sesgo de Salencia / Distractor:** En párrafos con múltiples inventores e hitos temporales (*"Edison invented the incandescent bulb in 1879, while Davy demonstrated electric light in 1802"*), el modelo es atraído por el sujeto más prominente y cercano a la raíz léxica *"invented"*. |
+| **3. Truncamiento de Modificador Sintáctico** | *What kind of reparations were imposed?* | `financial reparations` | `financial` | EM: **0.0%**<br>F1: **66.7%** | **Omisión del núcleo sintagmático:** El modelo extrae únicamente el adjetivo clasificatorio (*"financial"*) respondiendo a la interrogativa *"What kind of"*, pero omite el sustantivo núcleo esperado en la anotación humana. |
+
+---
+
+## 🚀 6. Pruebas de Inferencia en Vivo (Casos Reales)
 
 El modelo entrenado fue validado con ejemplos no estructurados en tiempo de ejecución:
 
@@ -156,7 +168,7 @@ El modelo entrenado fue validado con ejemplos no estructurados en tiempo de ejec
 
 ---
 
-## 🌐 6. Publicación en Hugging Face Hub
+## 🌐 7. Publicación en Hugging Face Hub
 
 El modelo ganador se encuentra disponible para su uso público:
 
@@ -190,7 +202,7 @@ print(f"Respuesta: {answer}")  # -> "French priest Edward Sorin"
 
 ---
 
-## 🎯 7. Intended Use (Casos de Uso Previstos)
+## 🎯 8. Intended Use (Casos de Uso Previstos)
 
 ### Usos Previstos
 - **Extractive Question Answering:** Recuperación exacta de respuestas textuales basadas en hechos a partir de contextos en inglés (documentación, manuales, artículos técnicos y enciclopedias).
@@ -204,7 +216,7 @@ print(f"Respuesta: {answer}")  # -> "French priest Edward Sorin"
 
 ---
 
-## ⚖️ 8. Justificación Técnica: Uso de SQuAD Completo (87,599 muestras) vs Subsample (~15k)
+## ⚖️ 9. Justificación Técnica: Uso de SQuAD Completo (87,599 muestras) vs Subsample (~15k)
 
 En el plan de trabajo preliminar se consideró una alternativa de submuestreo ($\sim 15,000$ ejemplos) como medida de contingencia ante posibles restricciones de tiempo o memoria en entornos de ejecución con recursos limitados (ej. cuotas gratuitas de Google Colab). No obstante, para la experimentación final se optó por entrenar con el **100% del dataset oficial de SQuAD v1.1 (87,599 pares pregunta-contexto)** debido a las siguientes razones técnicas fundamentales:
 
@@ -219,7 +231,7 @@ En el plan de trabajo preliminar se consideró una alternativa de submuestreo ($
 
 ---
 
-## ⚠️ 9. Limitaciones y Sesgos
+## ⚠️ 10. Limitaciones y Sesgos
 
 1. **Longitud de Secuencia:** El modelo procesa ventanas de hasta 384 tokens (con `doc_stride=128`). Textos que superen este límite deben ser fragmentados previamente.
 2. **Razonamiento Multi-hop y Numérico:** No realiza operaciones aritméticas (ej. diferencias de fechas, conteos) ni inferencia lógica distribuida en múltiples párrafos no adyacentes.
@@ -227,7 +239,18 @@ En el plan de trabajo preliminar se consideró una alternativa de submuestreo ($
 
 ---
 
-## 📚 10. Referencias
+## 📦 11. Entorno de Ejecución y Dependencias
+
+- **Lenguaje:** Python `3.11+ / 3.12+ / 3.13`
+- **PyTorch:** `2.6.0+cu124` (CUDA 12.4)
+- **Hugging Face Transformers:** `5.17.0`
+- **Hugging Face Datasets:** `5.0.1`
+- **Hardware:** NVIDIA GeForce RTX 4070 Laptop GPU (8.59 GB VRAM)
+- **Semilla Global (Random Seed):** `42`
+
+---
+
+## 📚 12. Referencias
 
 1. **Devlin, J., Chang, M. W., Lee, K., & Toutanova, K. (2018).** *BERT: Pre-training of Deep Bidirectional Transformers for Language Understanding.* [arXiv:1810.04805](https://arxiv.org/abs/1810.04805).
 2. **Rajpurkar, P., Zhang, J., Lopyrev, K., & Liang, P. (2016).** *SQuAD: 100,000+ Questions for Machine Comprehension of Text.* [arXiv:1606.05250](https://arxiv.org/abs/1606.05250).
@@ -236,7 +259,7 @@ En el plan de trabajo preliminar se consideró una alternativa de submuestreo ($
 
 ---
 
-## 📂 11. Estructura del Directorio
+## 📂 13. Estructura del Directorio
 
 ```
 QABert/
@@ -253,4 +276,5 @@ QABert/
 │   └── README.md                  # Model card para Hugging Face
 └── .env                           # Variables de entorno y token de Hugging Face
 ```
+
 
