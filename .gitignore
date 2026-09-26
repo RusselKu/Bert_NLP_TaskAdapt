@@ -2,7 +2,39 @@
 # GitIgnore - NLP BERT Task Adaptation
 # =====================================================================
 
-# 1. Archivos de Pesos y Checkpoints (>100MB protegidos de GitHub)
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*$py.class
+.pytest_cache/
+
+# Virtual environments
+.venv/
+venv/
+env/
+ENV/
+
+# Environment variables and secrets
+.env
+.env.*
+*.env
+*.pem
+*.key
+
+# Jupyter
+.ipynb_checkpoints/
+*/.ipynb_checkpoints/*
+
+# Hugging Face / local caches
+.cache/
+huggingface/
+
+# Local model staging used by Damian deployment workflow
+models/*
+!models/README.md
+
+# Large model weights and checkpoints
 *.safetensors
 *.bin
 *.pt
@@ -12,44 +44,24 @@
 *.msgpack
 *.onnx
 
-# Checkpoints y carpetas de resultados
+# Training checkpoints / temporary results
 results_full/
 results_partial/
 checkpoints/
 checkpoint-*/
 
-# 2. Credenciales y Variables de Entorno (Seguridad)
-.env
-.env.*
-*.env
-*.pem
-*.key
-
-# 3. Cache de Python y Entornos Virtuales
-__pycache__/
-*.py[cod]
-*$py.class
-.venv/
-venv/
-env/
-ENV/
-.pytest_cache/
-
-# 4. Temporales de Jupyter y VSCode
-.ipynb_checkpoints/
-*/.ipynb_checkpoints/*
-.vscode/
-.idea/
-
-# 5. Archivos del Sistema Operativo
-.DS_Store
-Thumbs.db
-desktop.ini
-
-# NER: datos descargados y artefactos locales de entrenamiento
-.cache/
+# NER local training artifacts
 NERBert/smoke_results/
 NERBert/results/*/checkpoints/
 NERBert/results/*/evaluation/
 NERBert/results/*/test_predictions.json
 NERBert/*.log
+
+# OS / editors
+.DS_Store
+Thumbs.db
+desktop.ini
+.vscode/
+.idea/
+docs/pdf_preview/
+.~lock.*#
