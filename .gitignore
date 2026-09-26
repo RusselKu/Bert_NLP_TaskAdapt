@@ -1,37 +1,65 @@
+# =====================================================================
+# GitIgnore - NLP BERT Task Adaptation
+# =====================================================================
+
 # Python
 __pycache__/
 *.py[cod]
 *.pyo
+*$py.class
+.pytest_cache/
 
 # Virtual environments
 .venv/
 venv/
 env/
-
-# Jupyter
-.ipynb_checkpoints/
+ENV/
 
 # Environment variables and secrets
 .env
+.env.*
 *.env
+*.pem
+*.key
 
-# Hugging Face cache / credentials
+# Jupyter
+.ipynb_checkpoints/
+*/.ipynb_checkpoints/*
+
+# Hugging Face / local caches
 .cache/
 huggingface/
 
-# Local model staging
+# Local model staging used by Damian deployment workflow
 models/*
 !models/README.md
 
-# Large model weights
-*.bin
+# Large model weights and checkpoints
 *.safetensors
+*.bin
 *.pt
 *.pth
 *.ckpt
+*.h5
+*.msgpack
+*.onnx
+
+# Training checkpoints / temporary results
+results_full/
+results_partial/
+checkpoints/
+checkpoint-*/
+
+# NER local training artifacts
+NERBert/smoke_results/
+NERBert/results/*/checkpoints/
+NERBert/results/*/evaluation/
+NERBert/results/*/test_predictions.json
+NERBert/*.log
 
 # OS / editors
 .DS_Store
 Thumbs.db
+desktop.ini
 .vscode/
 .idea/

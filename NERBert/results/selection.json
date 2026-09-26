@@ -1,0 +1,4 @@
+{
+  "winner": "full",
+  "criterion": "validation strict entity micro F1; exact tie: fewer trainable parameters"
+}
