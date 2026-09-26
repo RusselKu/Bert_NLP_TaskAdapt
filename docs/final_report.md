@@ -102,7 +102,7 @@ to verify that each adaptation strategy actually learned during optimization.
 | QA | Partial Fine-Tuning | 3 | 0.9040 | 85.17% Validation F1 | 1976.1 s |
 | QA | Full Fine-Tuning | 3 | 0.4990 | 88.21% Validation F1 | 4075.4 s |
 | Topic | Frozen BERT + Logistic Regression | N/A | N/A | 90.36% Accuracy | 222.54 s |
-| Topic | Full Fine-Tuning | 1 | 0.1891 | 94.58% Accuracy | 2889.20 s |
+| Topic | Full Fine-Tuning | 1 | 0.180748 | 94.45% Accuracy | 2793.66 s |
 
 *Loss values are reported according to each experiment's original logging
 implementation. NER and Topic use the training summary reported by their
@@ -129,8 +129,10 @@ BERT layers.
 
 For Topic Classification, the Feature-Based method does not have a neural
 training loss because BERT was frozen and Logistic Regression was trained on
-the extracted embeddings. The Fine-Tuning experiment used one epoch. Its
-directly observed evaluation loss was 0.171512.
+the extracted embeddings. The Fine-Tuning experiment used one epoch. The
+Trainer reported a training loss of 0.180748 and a validation loss of
+0.173437. Final evaluation on the untouched official AG News test split
+produced a test loss of 0.175384.
 
 ## 3. Named Entity Recognition
 
@@ -321,19 +323,19 @@ The experiment used one fine-tuning epoch with seed 42.
 | Method | Accuracy | Macro F1 | Training Time |
 |---|---:|---:|---:|
 | Frozen BERT + Logistic Regression | 90.36% | ~90% | 222.54 s |
-| Full Fine-Tuning | 94.58% | ~95% | 2889.20 s |
+| Full Fine-Tuning | 94.45% | 0.9444 | 2793.66 s |
 
-Fine-Tuning improved accuracy by approximately 4.22 percentage points and Macro F1 by approximately five percentage points.
+Fine-Tuning improved accuracy by approximately 4.09 percentage points and Macro F1 by approximately 0.04.
 
 The Feature-Based approach, however, required substantially less classifier-training time.
 
-### 6.5 Evaluation Limitation
+### 6.5 Evaluation Protocol
 
-The official AG News test split was supplied to the Hugging Face Trainer as `eval_dataset` during fine-tuning and was subsequently used again for final evaluation.
+The original 120,000-example AG News training split was divided using a fixed seed of 42 into 108,000 training examples and 12,000 validation examples.
 
-Therefore, unlike the NER and POS experiments, the test set was not maintained as a completely untouched final evaluation set.
+The validation split was supplied to the Hugging Face Trainer as `eval_dataset`. The official 7,600-example AG News test split remained untouched throughout training and validation and was used exclusively for final evaluation.
 
-This is an experimental limitation and the reported Topic Classification results should be interpreted accordingly.
+For the single fine-tuning epoch, the Trainer reported a training loss of 0.180748 and validation loss of 0.173437. Final evaluation on the official test split produced a test loss of 0.175384, 94.45% accuracy, and 0.9444 Macro F1.
 
 ### 6.6 Selected Model
 

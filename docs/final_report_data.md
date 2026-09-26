@@ -82,7 +82,7 @@ Classes: World, Sports, Business, Sci/Tech
 | Method | Accuracy | Macro F1 | Training Time |
 |---|---:|---:|---:|
 | Feature-based: frozen BERT + Logistic Regression | 90.36% | ~90% | 222.54 s |
-| Full Fine-Tuning | 94.58% | ~95% | 2889.20 s |
+| Full Fine-Tuning | 94.45% | 0.9444 | 2793.66 s |
 
 Selected method: Full Fine-Tuning
 
@@ -90,20 +90,27 @@ Learning rates:
 - Classification head: 1e-3
 - BERT encoder: 2e-5
 
-Observed fine-tuning evaluation loss: 0.171512
+Training diagnostics:
+- Training examples: 108,000
+- Validation examples: 12,000
+- Official test examples: 7,600
+- Training steps: 6,750
+- Training loss: 0.180748
+- Validation loss: 0.173437
+- Official test loss: 0.175384
 
 Reason:
-Fine-tuning improved accuracy by +4.22 percentage points and Macro F1 by
-approximately +5 percentage points, at a substantially higher computational cost.
+Fine-tuning improved accuracy by approximately +4.09 percentage points and
+Macro F1 by approximately +0.04, at a substantially higher computational cost.
 
-Evaluation limitation:
-The official AG News test split was also supplied to Trainer as eval_dataset
-during fine-tuning. Therefore test was not maintained as an entirely untouched
-final evaluation set. This limitation must be disclosed in the final report.
+Evaluation protocol:
+A fixed-seed 90/10 split of the original AG News training data produced
+108,000 training examples and 12,000 validation examples. The official
+7,600-example test split remained untouched until final evaluation.
 
-Artifact limitation:
-The trained bert_agnews_final weights are not currently present in GitHub and
-the Hugging Face repository has not yet been verified.
+Published artifact:
+The final model and tokenizer are published and independently verified at
+bialexacosta21/bert-agnews-topic-classification.
 
 Status: PENDING ARTIFACT / HF.
 
